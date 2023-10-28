@@ -17,9 +17,7 @@ type Node = String
 type Graph = [(Node, [Edge])]
 type Dnode = (Node, (Float, Node))
 
--- Get a weighted graph from a multiline text string, where each line specifies two nodes and a weight
--- If the data already represents a directed graph just pass along the edges, otherwise
--- append reversed edges.  This avoids redundant data when working with non-directed graphs.
+
 fromText :: String -> Bool -> Graph
 fromText strLines isDigraph = 
   let readData [n1, n2, w] = ((n1, n2), read w :: Float)
@@ -31,8 +29,8 @@ fromText strLines isDigraph =
 appendReversed :: [((String, String), Float)] -> [((String, String), Float)]
 appendReversed es = es ++ map (\((n1,n2),w) -> ((n2,n1),w)) es
 
--- Takes a list of pairs where the first element is a two-member list 
--- of nodes in any order and the second element is the weight for the edge connecting them.
+-- Toma una lista de pares donde el primer elemento es una lista de dos nodos en cualquier orden 
+--y el segundo elemento es el peso para la arista que los conecta.
 fromList :: [((String, String), Float)] -> Graph
 fromList es =
   let nodes = nub . map (fst . fst) $ es
@@ -41,29 +39,32 @@ fromList es =
         in map (\((_,n),wt) -> Edge n wt) connected 
   in map (\n -> (n, edgesFor es n)) nodes
 
--- Given a weighted graph and a node, return the edges incident on the node
+
+-- Dado un grafo ponderado y un nodo, devuelve las aristas incidentes al nodo.
 edgesFor :: Graph -> Node -> [Edge]
+
 edgesFor g n = snd . head . filter (\(nd, _) -> nd == n) $ g
 
--- Given a node and a list of edges, one of which is incident on the node, return the weight
+-- Dado un nodo y una lista de aristas, una de las cuales es incidente en el nodo, devuelve el peso.
 weightFor :: Node -> [Edge] -> Float
 weightFor n = weight . head . filter (\e -> n == node e)
 
--- Given a list of edges, return their nodes
+-- Dado una lista de aristas, devuelve sus nodos.
 connectedNodes :: [Edge] -> [Node]
 connectedNodes = map node
+
 
 dnodeForNode :: [Dnode] -> Node -> Dnode
 dnodeForNode dnodes n = head . filter (\(x, _) -> x == n) $ dnodes
 
--- Given a graph and a start node
+
 dijkstra :: Graph -> Node -> [Dnode]
 dijkstra g start = 
   let dnodes = initD g start
       unchecked = map fst dnodes
   in  dijkstra' g dnodes unchecked
 
--- Given a graph and a start node, construct an initial list of Dnodes
+-- Dado un grafo y un nodo de inicio, construye una lista inicial de Dnodes
 initD :: Graph -> Node -> [Dnode]
 initD g start =
   let initDist (n, es) = 
@@ -74,12 +75,9 @@ initD g start =
              else 1.0/0.0
   in map (\pr@(n, _) -> (n, ((initDist pr), start))) g
 
--- Dijkstra's algorithm (recursive)
--- get a list of Dnodes that haven't been checked yet
--- select the one with minimal distance and add it to the checked list. Call it current.
--- update each Dnode that connects to current by comparing 
--- the Dnode's current distance to the sum: (weight of the connecting edge + current's distance)
--- the algorithm terminates when all nodes have been checked.
+
+-- Algoritmo de Dijkstra .
+
 dijkstra' :: Graph -> [Dnode] -> [Node] -> [Dnode]
 dijkstra' g dnodes [] = dnodes
 dijkstra' g dnodes unchecked = 
@@ -92,15 +90,14 @@ dijkstra' g dnodes unchecked =
       dnodes' = map (\dn -> update dn current cnodes edges) dnodes
   in dijkstra' g dnodes' unchecked' 
 
--- given a Dnode to update, the current Dnode, the Nodes connected to current 
--- and current's edges, return a (possibly) updated Dnode
+
 update :: Dnode -> Dnode -> [Node] -> [Edge] -> Dnode
 update dn@(n, (nd, p)) (c, (cd, _)) cnodes edges =
   let wt = weightFor n edges
   in  if n `notElem` cnodes then dn
       else if cd+wt < nd then (n, (cd+wt, c)) else dn
 
--- given a Dijkstra solution and a destination node, return the path to it.
+-- Dada una solución de Dijkstra y un nodo de destino, devuelve el camino hacia él.
 pathToNode :: [Dnode] -> Node -> [Node]
 pathToNode dnodes dest = 
   let dn@(n, (d, p)) = dnodeForNode dnodes dest
