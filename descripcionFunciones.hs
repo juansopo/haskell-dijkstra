@@ -31,7 +31,7 @@ En este caso, la condición es que el primer elemento de cada tupla (nd, _) en e
 Después de aplicar filter, se utiliza head para obtener el primer elemento de la lista resultante. 
 Esto selecciona la tupla que corresponde al nodo n en el grafo
 Luego, se aplica snd a esta tupla seleccionada con head. La función snd se utiliza para obtener el segundo elemento de la tupla,
- que es una lista de aristas conectadas al nodo n
+que es una lista de aristas conectadas al nodo n
 -}
 
 weightFor :: Node -> [Edge] -> Float
@@ -46,7 +46,8 @@ weightFor queda a la espera que se le pase esa lista de aristas
 
 
 dnodeForNode :: [Dnode] -> Node -> Dnode
-{- filter (\(x, _) -> x == n) $ dnodes: Esta parte de la función utiliza la función filter para buscar dentro de la lista de nodos Dijkstra 
+{- filter (\(x, _) -> x == n) $ dnodes: Esta parte de la función utiliza la función filter
+ para buscar dentro de la lista de nodos Dijkstra 
 dnodes. 
 La función filter toma una función como argumento que se utiliza para evaluar si un elemento de la lista cumple con  la condición  
 que el primer elemento de cada tupla (x, _) 
@@ -65,7 +66,8 @@ que representan los nodos y sus distancias mínimas desde el nodo de inicio
 se llama a la función initD con el grafo g y el nodo de inicio start para inicializar la lista de nodos Dijkstra. 
 La función initD crea una lista de nodos Dijkstra con distancias iniciales a partir del nodo de inicio.
 
-unchecked = map fst dnodes: Luego, se utiliza la función map para obtener una lista de nodos no verificados (sin revisar) a partir de la lista de nodos Dijkstra dnodes.
+unchecked = map fst dnodes: Luego, se utiliza la función map para obtener una lista de nodos 
+no verificados (sin revisar) a partir de la lista de nodos Dijkstra dnodes.
 Esto se hace extrayendo el primer elemento (nodo) de cada nodo Dijkstra en la lista.
 
 Finalmente, se llama a la función dijkstra' con el grafo g,
@@ -77,6 +79,7 @@ por el algoritmo de Dijkstra para encontrar las distancias mínimas en un proble
 
 initD :: Graph -> Node -> [Dnode]
 -- Dado un grafo y un nodo de inicio, construye una lista inicial de Dnodes
+
 {-Itera a través de todos los nodos del grafo g utilizando la función map. 
 Cada nodo del grafo se representa como una tupla (n, es) 
 donde n es el nombre del nodo y es es la lista de aristas conectadas al nodo
@@ -113,6 +116,9 @@ dunchecked = filter (\dn -> (fst dn) elem unchecked) dnodes: Se filtran los nodo
 dnodes para obtener solo aquellos que aún no han sido revisados, es decir, 
 aquellos cuyos nombres (obtenidos con fst dn) están en la lista de nodos no revisados unchecked.
 
+
+SE ORDENAN TODOS LOS NO CHEKEADOS
+
 current = head . sortBy (\(_,(d1,_)) (_,(d2,_)) -> compare d1 d2) $ dunchecked: Se selecciona el nodo Dijkstra actual 
 eligiendo el nodo con la distancia mínima en la lista de nodos Dijkstra no revisados. 
 Para ello, se utiliza sortBy para ordenar la lista de dunchecked en función de la distancia mínima, 
@@ -125,21 +131,24 @@ unchecked' = delete c unchecked: Se elimina el nodo actual de la lista de nodos 
 edges = edgesFor g c: Se obtienen las aristas conectadas al nodo actual c.
 
 cnodes = intersect (connectedNodes edges) unchecked': Se calcula la intersección entre los nodos conectados 
-a través de las aristas del nodo actual y los nodos no revisados. Esto identifica los nodos conectados que aún no se han revisado.
+a través de las aristas del nodo actual y los nodos no revisados. 
+Esto identifica los nodos conectados que aún no se han revisado.
 
 dnodes' = map (\dn -> update dn current cnodes edges) dnodes: Se actualizan los nodos Dijkstra en la lista dnodes.
 Para cada nodo Dijkstra en la lista, se utiliza la función update para verificar si se puede mejorar la distancia mínima
 a través del nodo actual y, en caso afirmativo, se actualiza el nodo Dijkstra correspondiente.
 
-Finalmente, la función dijkstra' se llama recursivamente con la nueva lista de nodos Dijkstra actualizada dnodes' y la nueva lista de nodos no revisados unchecked'. Esto se repite hasta que no queden más nodos no revisados en unchecked, momento en el que se alcanza el caso base 
-y se devuelve la lista de nodos Dijkstra final con las distancias mínimas y los caminos más cortos.-}
+Finalmente, la función dijkstra' se llama recursivamente con la nueva lista de nodos Dijkstra actualizada dnodes' y la nueva lista de nodos no revisados unchecked'.
+Esto se repite hasta que no queden más nodos no revisados en unchecked, momento en el que se alcanza el caso base 
+y se devuelve la lista de nodos Dijkstra final con las distancias mínimas 
+y los caminos más cortos.-}
 
 
 
 
 update :: Dnode -> Dnode -> [Node] -> [Edge] -> Dnode
 -- Dado un Dnode para actualizar, el Dnode actual, los nodos conectados al actual
--- y las aristas del actual, devuelve un Dnode (posiblemente) actualizado.
+-- y las aristas del actual, devuelve un Dnode  actualizado.
 {-
 dn@(n, (nd, p)): El primer argumento dn es un nodo Dijkstra, que se descompone en tres partes:
 
@@ -158,10 +167,12 @@ edges: Una lista de aristas conectadas al nodo actual c.
 
 La función realiza la siguiente lógica:
 
-wt = weightFor n edges: Se obtiene el peso de la arista que conecta el nodo n al nodo actual c utilizando la función weightFor.
+wt = weightFor n edges: Se obtiene el peso de la arista que conecta 
+el nodo n al nodo actual c utilizando la función weightFor.
 Esto se almacena en la variable wt.
 
-Se verifica si el nodo n no está en la lista de nodos conectados cnodes desde el nodo actual c.
+Se verifica si el nodo n no está en la lista de nodos conectados
+cnodes desde el nodo actual c.
 Si es así, significa que no hay una conexión directa desde el nodo actual al nodo n, 
 por lo que no se puede actualizar su distancia mínima. 
 En este caso, la función devuelve el nodo Dijkstra original dn sin cambios.
@@ -172,7 +183,8 @@ y el peso de la arista (wt) es menor que la distancia mínima anterior almacenad
 Si esta suma es menor, significa que se ha encontrado un camino más corto hacia el nodo n a través del nodo actual c.
 En este caso, la función devuelve un nuevo nodo Dijkstra que contiene la nueva distancia mínima y el nombre del nodo previo en el camino más corto.
 
-Si ninguna de las condiciones anteriores se cumple, la función devuelve el nodo Dijkstra original dn sin cambios.
+Si ninguna de las condiciones anteriores se cumple,
+la función devuelve el nodo Dijkstra original dn sin cambios.
 -}
 
 
@@ -182,7 +194,8 @@ Si ninguna de las condiciones anteriores se cumple, la función devuelve el nodo
 pathToNode :: [Dnode] -> Node -> [Node]
 -- Dada una solución de Dijkstra y un nodo de destino, devuelve el camino hacia él.
 {-
-dn@(n, (d, p)) = dnodeForNode dnodes dest: Se utiliza la función dnodeForNode para buscar el nodo Dijkstra correspondiente al nodo de destino dest en la lista de nodos Dijkstra dnodes. 
+dn@(n, (d, p)) = dnodeForNode dnodes dest: Se utiliza la función dnodeForNode para buscar el nodo Dijkstra 
+correspondiente al nodo de destino dest en la lista de nodos Dijkstra dnodes. 
 Esto devuelve una tupla que contiene el nombre del nodo n, la distancia mínima d y el nombre del nodo previo p en el camino más corto.
 
 A continuación, se verifica si el nombre del nodo n es igual al nombre del nodo previo p.
@@ -190,7 +203,14 @@ Si son iguales, significa que el nodo de destino dest es el mismo que el nodo de
 y ya se ha alcanzado el nodo de destino. En este caso, se devuelve una lista que contiene solo el nodo de destino dest.
 
 Si el nombre del nodo n no es igual al nombre del nodo previo p, significa que todavía no se ha alcanzado el nodo de destino y se necesita un camino más largo. 
-En este caso, se realiza una llamada recursiva a la función pathToNode para encontrar el camino desde el nodo de inicio hasta el nodo previo p, y luego se agrega el nodo n al final de la lista. Esto se hace utilizando el operador ++ para concatenar la lista del camino desde el nodo de inicio hasta p con una lista que contiene solo el nodo n.
+En este caso, se realiza una llamada recursiva a la función pathToNode
+para encontrar el camino desde el nodo de inicio hasta el nodo previo p, y luego se agrega el nodo n al final de la lista. Esto se hace utilizando el operador ++ para concatenar la lista del camino desde el nodo de inicio hasta p con una lista que contiene solo el nodo n.
 
 Este proceso se repite recursivamente hasta que se llega al nodo de destino, y finalmente se obtiene la lista de nodos que representan el camino más corto desde el nodo de inicio hasta el nodo de destino.
+-}
+
+pesoRutaAlNodo :: [Dnode] -> Node -> Float
+
+{-
+Da el peso del camino más corto hasta el nodo de destino
 -}

@@ -4,6 +4,7 @@ module Dijkstra
   dijkstra,
   pathToNode,
   edgesFor,
+  pesoRutaAlNodo, 
   Edge(..),
   Node,
   Graph,
@@ -102,3 +103,9 @@ pathToNode :: [Dnode] -> Node -> [Node]
 pathToNode dnodes dest = 
   let dn@(n, (d, p)) = dnodeForNode dnodes dest
   in if n == p then [n] else pathToNode dnodes p ++ [n]
+
+ 
+pesoRutaAlNodo :: [Dnode] -> Node -> Float
+pesoRutaAlNodo  dnodes dest = 
+  let dn@(n, (d, p)) = dnodeForNode dnodes dest
+  in if n == p then 0.0 else  d + pesoRutaAlNodo dnodes p 
