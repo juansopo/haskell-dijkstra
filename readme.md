@@ -1,4 +1,4 @@
-Dijkstra's Algorithm (Version 2)
+Algoritmo Dijkstra 
 --------------------------------
 
 
