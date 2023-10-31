@@ -23,6 +23,23 @@ map (\n -> (n, edgesFor es n)) nodes: En esta parte, se aplica un mapeo a la lis
 Para cada nodo en la lista, se crea una tupla que contiene el nombre del nodo 
 y una lista de aristas que están conectadas a ese nodo. 
 -}
+fromList :: [((String, String), Float)] -> Graph
+{-La función fromList toma una lista de pares ((String, String), Float) llamada es y crea un grafo a partir de ella. La función busca los nodos y las conexiones entre ellos en la lista es para construir un grafo.
+
+La variable nodes se calcula utilizando nub . map (fst . fst) $ es. 
+map (fst . fst) $ es toma la lista de pares es y extrae el primer elemento del primer par (String, String).
+nub se aplica a esta lista para eliminar los elementos duplicados y conservar únicamente los nodos únicos.
+La función edgesFor se define para obtener las aristas conectadas a un nodo dado en la lista es. 
+Recibe dos argumentos: la lista es y un nodo (node), y realiza lo siguiente:
+
+Filtra la lista es para encontrar todas las conexiones (pares ((n, _), _)) donde el primer elemento
+del par coincide con el nodo node.
+Mapea estos pares filtrados a objetos Edge, donde el segundo elemento del par se convierte en el peso de la arista.
+La parte principal de la función fromList utiliza map para generar una lista de tuplas. Cada tupla contiene un nodo 
+y la lista de aristas conectadas a ese nodo. El mapeo se realiza para cada nodo único encontrado en la lista nodes.
+La estructura de cada tupla en la lista generada será (n, edgesFor es n).
+ -}
+
 
 edgesFor :: Graph -> Node -> [Edge]
 

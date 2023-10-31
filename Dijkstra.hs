@@ -27,6 +27,9 @@ fromText strLines isDigraph =
               else appendReversed es
   in fromList allEs
 
+--La función appendReversed toma una lista de pares de tuplas ((String, String), Float) llamada es 
+--y devuelve una nueva lista que contiene todos los elementos de es, 
+--seguidos por una versión invertida de cada elemento de la lista original.
 appendReversed :: [((String, String), Float)] -> [((String, String), Float)]
 appendReversed es = es ++ map (\((n1,n2),w) -> ((n2,n1),w)) es
 
@@ -34,7 +37,7 @@ appendReversed es = es ++ map (\((n1,n2),w) -> ((n2,n1),w)) es
 --y el segundo elemento es el peso para la arista que los conecta.
 fromList :: [((String, String), Float)] -> Graph
 fromList es =
-  let nodes = nub . map (fst . fst) $ es
+  let nodes = nub . map (fst . fst) $ es --nub elimina duplicados 
       edgesFor es node = 
         let connected = filter (\((n,_),_) -> node == n) $ es
         in map (\((_,n),wt) -> Edge n wt) connected 
@@ -86,8 +89,8 @@ dijkstra' g dnodes unchecked =
       current = head . sortBy (\(_,(d1,_)) (_,(d2,_)) -> compare d1 d2) $ dunchecked
       c = fst current
       unchecked' = delete c unchecked
-      edges = edgesFor g c
-      cnodes = intersect (connectedNodes edges) unchecked'
+      edges = edgesFor g c 
+      cnodes = intersect (connectedNodes edges) unchecked' --lista de los nodos conectados al actual y que no estan chekeados
       dnodes' = map (\dn -> update dn current cnodes edges) dnodes
   in dijkstra' g dnodes' unchecked' 
 
@@ -95,8 +98,13 @@ dijkstra' g dnodes unchecked =
 update :: Dnode -> Dnode -> [Node] -> [Edge] -> Dnode
 update dn@(n, (nd, p)) (c, (cd, _)) cnodes edges =
   let wt = weightFor n edges
-  in  if n `notElem` cnodes then dn
-      else if cd+wt < nd then (n, (cd+wt, c)) else dn
+  in  if n `notElem` cnodes then dn 
+      else if cd+wt < nd then (n, (cd+wt, c)) else dn 
+-- Si n no esta conectado al c actual por una arista entonces sigue igual  
+--Si el peso del nodo C (distancia de él a la fuente) + el peso
+-- de la arista que conecta  C a N, es menor al peso de la distancia 
+--De n a la fuente entonces, se actualiza el nodo y se cambia el peso 
+--Y su predecesor, en caso de dar falso devuelve todo como esta  
 
 -- Dada una solución de Dijkstra y un nodo de destino, devuelve el camino hacia él.
 pathToNode :: [Dnode] -> Node -> [Node]
@@ -106,6 +114,5 @@ pathToNode dnodes dest =
 
  
 pesoRutaAlNodo :: [Dnode] -> Node -> Float
-pesoRutaAlNodo  dnodes dest = 
-  let dn@(n, (d, p)) = dnodeForNode dnodes dest
-  in if n == p then 0.0 else  d + pesoRutaAlNodo dnodes p 
+pesoRutaAlNodo  [] dest = 0
+pesoRutaAlNodo  ((x,(w, _)):xs) dest = if x == dest then w else   pesoRutaAlNodo xs dest 
