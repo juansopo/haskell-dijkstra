@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 a b 5
 a c 2
 b c 4
@@ -6,4 +7,14 @@ c d 1
 c e 7
 d e 8
 d f 10
+=======
+a b 5
+a c 2
+b c 4
+b d 3
+c d 1
+c e 7
+d e 8
+d f 10
+>>>>>>> c8f715171148ccd3d8d667f8d096c9f2694a5de8
 e f 11
